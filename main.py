@@ -4,7 +4,6 @@ import csv
 
 import re
 
-new_contacts_list = []
 
 with open("phonebook_raw.csv", encoding='utf-8') as f:
     rows = csv.reader(f, delimiter=",")
@@ -13,32 +12,28 @@ with open("phonebook_raw.csv", encoding='utf-8') as f:
 
 
 def correct_contact(contact_list):
-    for element in contact_list:
-        # new_element = element[0:3]
-        new_element = [' '.join(element[0:3])]
-        for el in new_element:
-            new_list = el.split()
-            new_contact = new_list + element[3:7]
-        new_contacts_list.append(new_contact)
-    pprint(new_contacts_list)
+    phonebook = []
 
-    for person in new_contacts_list:
-        for elem in person:
-            pattern_phone = r"(\+7|8)?\s*\W*(\d+)\W*\s*(\d+)[-|s*](\d+)[-|s*](\d+)\s*\W*(\w*\.*)\s*(\d+)\W*"
-            phone = re.match(pattern_phone, elem)
-            pprint(phone)
-            new_pattern_phone = r"+7(\2)-\3-\4-\5\6\7"
-            result = phone.sub(new_pattern_phone, elem)
-            pprint(result)
+    phonebook.append(contacts_list[0])
 
-    # final_contact = []
-    # for new_name in new_contacts_list:
-    #     if new_name[0:1] == new_name[0:1]:
-    #         set_1 = new_name | new_name
-    #         person_list.append(set_1)
-    #     pprint(person_list)
+    for i in contacts_list[1:]:
+        fio = re.findall('\w+', str(i[:3]))
+        lastname = fio[0]
+        firstname = fio[1]
+        if len(fio) > 2:
+            surname = fio[2]
+        else:
+            surname = ''
+        tel = re.sub('[^0-9]', '', i[5])
+        tel = re.sub(r'(\d{1})(\d{3})(\d{3})(\d{2})(\d{2})(\d{4})', r'+7(\2)-\3-\4-\5 доб.\6', tel)
+        tel = re.sub(r'(\d{1})(\d{3})(\d{3})(\d{2})(\d{2})', r'+7(\2)-\3-\4-\5', tel)
+        new_line = []
+        new_line.extend([lastname, firstname, surname, i[3], i[4], tel, i[6]])
+
+        phonebook.append(new_line)
 
 
+    pprint(phonebook)
 
 
 
