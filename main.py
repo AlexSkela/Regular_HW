@@ -4,6 +4,7 @@ import csv
 
 import re
 
+import pandas as pd
 
 with open("phonebook_raw.csv", encoding='utf-8') as f:
     rows = csv.reader(f, delimiter=",")
@@ -32,9 +33,13 @@ def correct_contact(contact_list):
 
         phonebook.append(new_line)
 
+    phonebook = pd.DataFrame(phonebook)
+    phonebook = phonebook.rename(columns=phonebook.iloc[0])
+    phonebook = phonebook[1:]
+    phonebook = phonebook.groupby(['lastname', 'firstname']).agg({'surname':'max', 'organization':'max', 'position':'max', 'email':'max'}).reset_index()
 
     pprint(phonebook)
 
-
+    phonebook.to_csv('phonebook.csv', index = False)
 
 correct_contact(contacts_list)
